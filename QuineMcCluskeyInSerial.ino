@@ -59,47 +59,18 @@ void setup() {
 
 void loop() {
   if (esp8266Serial.available()) {
-    // char c = esp8266Serial.read();
-    // if (c == 's') { // Start marker
-    //   String message = "";
-    //   while (c != 'q') { // Read until end marker is received
-    //     c = esp8266Serial.read();
-    //     if (c != 'q') {
-    //       message += c;
-    //     }
-    //   }
-    //   Serial.println("Received message: " + message);
-    //   incomingDone = true;
-    // }
     String receivedString = esp8266Serial.readStringUntil('\n');
-    // Serial.println("Received message: " + receivedString);
     parseReceivedMessage(receivedString);
-    // Serial.println("the shit got parsed");
-
-    // Serial.println(indicator);
-    // Serial.println(numMinterms);
-    // for (int i = 0; i < numMinterms; i++){
-    //   Serial.print(minterms[i]);
-    //   Serial.print(" ");
-    // }
-    // Serial.println("");
-
-
-    testQMC = QuineMcCluskey(minterms, numMinterms, indicator);  // Assignment operator called
-    Serial.println("the object is now made");
-    // Serial.println(testQMC.detectBitsCount());
+    testQMC = QuineMcCluskey(minterms, numMinterms, indicator); 
 
     incomingDone = true;
   }
 
   if (incomingDone) {
     delay(1000);
-    // esp8266Serial.print("s"); //this is the start mark
-    // int test = testQMC.detectBitsCount();
-    // Serial.println(test);
+
     esp8266Serial.print("sample response");
-    // esp8266Serial.print("Temp");
-    // esp8266Serial.print("q"); //this is the end mark
+
     incomingDone = false;
   }
 }

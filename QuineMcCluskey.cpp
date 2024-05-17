@@ -5,50 +5,70 @@
 QuineMcCluskey::QuineMcCluskey(){};
 
 QuineMcCluskey::QuineMcCluskey(int* inputArray, int length, int indicator) {
-  // Constructor implementation
-  this->inputArray = inputArray;
-  this->arrayLength = length;
+  this->minterms = inputArray;
+  this->numMinterms = length;
   this->indicator = indicator;
+  this->numInputs = detectBitsCount();
 }
 
-// QuineMcCluskey::~QuineMcCluskey() {
-//   // Destructor implementation
-//   // Clean up any resources allocated by the object
 
-//   // Example: Free dynamically allocated memory
-//   // delete[] inputArray;
-// }
-
-void QuineMcCluskey::setup() {
-  // Example method implementation
-  // Perform setup tasks
-}
 
 void QuineMcCluskey::solve() {
-  // Example method implementation
-  // Perform solving tasks
+  groupMinterms();
+  generatePrimeImplicants();
+  findEssentialPrimeImplicants();
+  simplifyBooleanExpression();
+  printSimplifiedExpression();
+}
+
+
+void QuineMcCluskey::groupMinterms() {
+  // Implement grouping logic
+}
+
+void QuineMcCluskey::generatePrimeImplicants() {
+  // Implement prime implicants generation logic
+}
+
+void QuineMcCluskey::findEssentialPrimeImplicants() {
+  // Implement essential prime implicants logic
+}
+
+void QuineMcCluskey::simplifyBooleanExpression() {
+  // Implement Boolean expression simplification logic
+}
+
+void QuineMcCluskey::printSimplifiedExpression() {
+  // Implement printing the simplified Boolean expression
 }
 
 
 
 int QuineMcCluskey::detectBitsCount() {
-    int num = inputArray[arrayLength - 1];
+  int num = minterms[numMinterms - 1];
 
-    // If num is already a power of 2, return it
-    if (num && !(num & (num - 1))) {
-        int power = 0;
-        while (num >>= 1) {
-            power++;
-        }
-        return power;
+  // If num is already a power of 2, return it
+  if (num && !(num & (num - 1))) {
+    int power = 0;
+    while (num >>= 1) {
+      power++;
     }
-
-    // Find the next power of 2 using bit manipulation
-    int power = 1;
-    while ((1 << power) < num) {
-        power++;
-    }
-
     return power;
+  }
+
+  // Find the next power of 2 using bit manipulation
+  int power = 1;
+  while ((1 << power) < num) {
+    power++;
+  }
+
+  return power;
 }
 
+// QuineMcCluskey::~QuineMcCluskey() {
+//   delete[] inputArray;
+// }
+// void QuineMcCluskey::setup() {
+//   // Example method implementation
+//   // Perform setup tasks
+// }
