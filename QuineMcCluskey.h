@@ -13,8 +13,9 @@ private:
   int indicator;
 
 public:
+  QuineMcCluskey();
   QuineMcCluskey(int* inputArray, int length, int indicator);  // Constructor
-  ~QuineMcCluskey(); // Destructor
+  // ~QuineMcCluskey(); // Destructor
 
   void setup(); // Example method
   void solve(); // Example method

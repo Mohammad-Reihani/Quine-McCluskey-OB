@@ -2,6 +2,8 @@
 
 #include "QuineMcCluskey.h"
 
+QuineMcCluskey::QuineMcCluskey(){};
+
 QuineMcCluskey::QuineMcCluskey(int* inputArray, int length, int indicator) {
   // Constructor implementation
   this->inputArray = inputArray;
@@ -9,13 +11,13 @@ QuineMcCluskey::QuineMcCluskey(int* inputArray, int length, int indicator) {
   this->indicator = indicator;
 }
 
-QuineMcCluskey::~QuineMcCluskey() {
-  // Destructor implementation
-  // Clean up any resources allocated by the object
+// QuineMcCluskey::~QuineMcCluskey() {
+//   // Destructor implementation
+//   // Clean up any resources allocated by the object
 
-  // Example: Free dynamically allocated memory
-  delete[] inputArray;
-}
+//   // Example: Free dynamically allocated memory
+//   // delete[] inputArray;
+// }
 
 void QuineMcCluskey::setup() {
   // Example method implementation
