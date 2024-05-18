@@ -57,11 +57,40 @@ void setup() {
   Serial.println("Testing the ESP8266 communication");
 }
 
+
 void loop() {
   if (esp8266Serial.available()) {
     String receivedString = esp8266Serial.readStringUntil('\n');
     parseReceivedMessage(receivedString);
-    testQMC = QuineMcCluskey(minterms, numMinterms, indicator); 
+    testQMC = QuineMcCluskey(minterms, numMinterms, indicator);
+    testQMC.solve();
+
+    // Serial.println("Grouped Terms:");
+    // for (const auto& term : testQMC.groupedTerms) {
+    //     Serial.print("(");
+    //     Serial.print(term.first); // Print the minterm
+    //     Serial.print(", ");
+    //     Serial.print(term.second); // Print the group number
+    //     Serial.println(")");
+    // }
+
+    Serial.println("Grouped Terms:");
+    for (const auto& data : testQMC.groupedTerms) {
+      Serial.print("Minterms Included: [");
+      for (const auto& minterm : data.mintermsIncluded) {
+        Serial.print(minterm);
+        Serial.print(" ");
+      }
+      Serial.print("] Deleted Args: [");
+      for (const auto& arg : data.deletedArgs) {
+        Serial.print(arg);
+        Serial.print(" ");
+      }
+      Serial.print("] Stage: ");
+      Serial.print(data.stage);
+      Serial.print("] groupFromTop: ");
+      Serial.println(data.groupFromTop);
+    }
 
     incomingDone = true;
   }

@@ -14,6 +14,7 @@ QuineMcCluskey::QuineMcCluskey(int* inputArray, int length, int indicator) {
 
 
 void QuineMcCluskey::solve() {
+  initialMintermsGrouping();
   groupMinterms();
   generatePrimeImplicants();
   findEssentialPrimeImplicants();
@@ -21,9 +22,30 @@ void QuineMcCluskey::solve() {
   printSimplifiedExpression();
 }
 
+void QuineMcCluskey::addGroup(const std::vector<int>& mintermsIncluded, const std::vector<int>& deletedArgs, int stage, int groupFromTop) {
+    groupedTerms.push_back({mintermsIncluded, deletedArgs, stage, groupFromTop});
+}
 
 void QuineMcCluskey::groupMinterms() {
-  // Implement grouping logic
+
+}
+
+void QuineMcCluskey::initialMintermsGrouping() {
+  int groupNum = 0;
+  int totalAdded = 0;
+
+  // Loop until all minterms are grouped
+  while (totalAdded < numMinterms) {
+    for (int i = 0; i < numMinterms; i++) {
+      if (countOnesInBinary(minterms[i]) == groupNum) {
+        // Push a pair into groupedTerms
+        // groupedTerms.push_back(std::make_pair(minterms[i], groupNum));
+        addGroup({minterms[i]}, {/*none*/}, 0, groupNum);
+        totalAdded++;
+      }
+    }
+    groupNum++;  // Move to the next group
+  }
 }
 
 void QuineMcCluskey::generatePrimeImplicants() {
@@ -63,6 +85,20 @@ int QuineMcCluskey::detectBitsCount() {
   }
 
   return power;
+}
+
+int QuineMcCluskey::countOnesInBinary(int num) {
+  int count = 0;
+
+  // Convert num to binary and count 1's
+  while (num > 0) {
+    if (num % 2 == 1) {
+      count++;
+    }
+    num /= 2;
+  }
+
+  return count;
 }
 
 // QuineMcCluskey::~QuineMcCluskey() {
