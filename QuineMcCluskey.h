@@ -45,6 +45,8 @@ private:
 
   int countOnesInBinary(int num);
   bool isPowerOfTwo(int num);
+  bool compareVectors(const std::vector<int>& vec1, const std::vector<int>& vec2, bool considerOrder);
+  void vectorSelectionSort(std::vector<int>& vec);
 
 public:
   QuineMcCluskey();

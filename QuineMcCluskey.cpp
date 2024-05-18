@@ -130,7 +130,7 @@ void QuineMcCluskey::groupMinterms() {
       for (int j = i + 1; j < endIndexHolder; j++) {
         const auto& lowerdata = groupedTerms[j];
 
-        if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])) {
+        if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]) && compareVectors(upperdata.deletedArgs, lowerdata.deletedArgs, true)) {
 
 
 
@@ -239,6 +239,39 @@ bool QuineMcCluskey::isPowerOfTwo(int num) {
 
   // Check if num is a power of two by counting the set bits (1s) in its binary representation
   return (num & (num - 1)) == 0;
+}
+
+bool QuineMcCluskey::compareVectors(const std::vector<int>& vec1, const std::vector<int>& vec2, bool considerOrder) {
+  if (vec1.size() != vec2.size()) {
+    return false;  // Vectors of different sizes cannot be equal
+  }
+
+  if (considerOrder) {
+    return vec1 == vec2;  // Compare vectors directly for equality with order consideration
+  } else {
+    // Sort the vectors and then compare for equality
+    std::vector<int> sortedVec1 = vec1;
+    std::vector<int> sortedVec2 = vec2;
+    vectorSelectionSort(sortedVec1);
+    vectorSelectionSort(sortedVec2);
+    return sortedVec1 == sortedVec2;
+  }
+}
+
+void QuineMcCluskey::vectorSelectionSort(std::vector<int>& vec) {
+    int n = vec.size();
+    for (int i = 0; i < n - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; j++) {
+            if (vec[j] < vec[minIndex]) {
+                minIndex = j;
+            }
+        }
+        // Swap vec[i] and vec[minIndex]
+        int temp = vec[i];
+        vec[i] = vec[minIndex];
+        vec[minIndex] = temp;
+    }
 }
 
 // QuineMcCluskey::~QuineMcCluskey() {
