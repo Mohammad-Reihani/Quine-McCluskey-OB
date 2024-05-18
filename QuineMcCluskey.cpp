@@ -22,13 +22,143 @@ void QuineMcCluskey::solve() {
   printSimplifiedExpression();
 }
 
-void QuineMcCluskey::addGroup(const std::vector<int>& mintermsIncluded, const std::vector<int>& deletedArgs, int stage, int groupFromTop) {
-    groupedTerms.push_back({mintermsIncluded, deletedArgs, stage, groupFromTop});
-}
+// void QuineMcCluskey::addGroup(const std::vector<int>& mintermsIncluded, const std::vector<int>& deletedArgs, int stage, int groupFromTop) {
+//   groupedTerms.push_back({ mintermsIncluded, deletedArgs, stage, groupFromTop });
+// }
+
+// void QuineMcCluskey::groupMinterms() {
+//   int stage = 1;
+//   int groupFromTop = 0;
+//   int added = 0;
+//   while (true) {
+//     // for (const auto& upperdata : testQMC.groupedTerms) {
+//     //   for (const auto& lowerdata : testQMC.groupedTerms) {
+//     //     if(upperdata != lowerdata && upperdata.stage == lowerdata.stage && upperdata.group+1 == lowerdata.group
+//     //      && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])){
+//     //         //do something
+//     //     }
+//     //   }
+//     // }
+//     for (size_t i = 0; i < groupedTerms.size(); i++) {
+//       const auto& upperdata = groupedTerms[i];
+//       for (size_t j = i + 1; j < groupedTerms.size(); j++) {
+//         const auto& lowerdata = groupedTerms[j];
+//         if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])) {
+//           // addGroup(upperdata.mintermsIncluded.push_back(lowerdata.mintermsIncluded), lowerdata.deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]), stage, groupNum);
+
+//           // Combine mintermsIncluded vectors of upperdata and lowerdata
+//           std::vector<int> combinedMinterms;
+//           combinedMinterms.insert(combinedMinterms.end(), upperdata.mintermsIncluded.begin(), upperdata.mintermsIncluded.end());
+//           combinedMinterms.insert(combinedMinterms.end(), lowerdata.mintermsIncluded.begin(), lowerdata.mintermsIncluded.end());
+
+//           // Add the combined vector to deletedArgs
+//           std::vector<int> deletedArgs;
+//           deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
+
+//           // Call addGroup with combined data
+//           addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
+//           added++;
+//         }
+//       }
+//       groupFromTop++;
+//     }
+
+//     if (added == 0)
+//       break;
+//     else
+//       added = 0;
+
+//     stage++;
+//   }
+// }
+
+// void QuineMcCluskey::groupMinterms() {
+//   int stage = 1;
+//   int groupFromTop = 0;
+//   int added = 0;
+//   std::vector<int> combinedMinterms;
+//   std::vector<int> deletedArgs;
+
+//   while (true) {
+//     bool anyAdded = false;
+
+
+//     for (int i = 0; i < groupedTerms.size(); i++) {
+//       const auto upperdata = groupedTerms[i];
+//       for (int j = i + 1; j < groupedTerms.size(); j++) {
+//         const auto lowerdata = groupedTerms[j];
+//         if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])) {
+//           combinedMinterms.clear();
+//           combinedMinterms.insert(combinedMinterms.end(), upperdata.mintermsIncluded.begin(), upperdata.mintermsIncluded.end());
+//           combinedMinterms.insert(combinedMinterms.end(), lowerdata.mintermsIncluded.begin(), lowerdata.mintermsIncluded.end());
+
+//           deletedArgs.clear();
+//           deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
+
+//           // addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
+//           groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop });
+//           added++;
+//           anyAdded = true;
+//         }
+//       }
+//       groupFromTop++;
+//     }
+
+//     if (!anyAdded)
+//       break;
+
+//     stage++;
+//   }
+// }
+
 
 void QuineMcCluskey::groupMinterms() {
+  int stage = 1;
+  int groupFromTop = 0;
+  int startIndex;
+  int endIndexHolder = 0;
+  std::vector<int> combinedMinterms;
+  std::vector<int> deletedArgs;
+  while (true) {
 
+    startIndex = endIndexHolder;
+    endIndexHolder = groupedTerms.size();
+    bool anyAdded = false;
+    for (int i = startIndex; i < endIndexHolder; i++) {
+
+      const auto upperdata = groupedTerms[i];
+      for (int j = i + 1; j < endIndexHolder; j++) {
+        const auto& lowerdata = groupedTerms[j];
+
+        if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])) {
+
+
+
+          combinedMinterms.clear();
+          combinedMinterms.insert(combinedMinterms.end(), upperdata.mintermsIncluded.begin(), upperdata.mintermsIncluded.end());
+          combinedMinterms.insert(combinedMinterms.end(), lowerdata.mintermsIncluded.begin(), lowerdata.mintermsIncluded.end());
+
+          deletedArgs.clear();
+          deletedArgs.insert(deletedArgs.end(), upperdata.deletedArgs.begin(), upperdata.deletedArgs.end());
+          //                    deletedArgs.insert(deletedArgs.end(), lowerdata.deletedArgs.begin(), lowerdata.deletedArgs.end());
+          deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
+
+          //                    addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
+          groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop });
+          anyAdded = true;
+        }
+      }
+      groupFromTop++;
+    }
+
+
+    if (!anyAdded)
+      break;
+
+    stage++;
+  }
 }
+
 
 void QuineMcCluskey::initialMintermsGrouping() {
   int groupNum = 0;
@@ -40,7 +170,8 @@ void QuineMcCluskey::initialMintermsGrouping() {
       if (countOnesInBinary(minterms[i]) == groupNum) {
         // Push a pair into groupedTerms
         // groupedTerms.push_back(std::make_pair(minterms[i], groupNum));
-        addGroup({minterms[i]}, {/*none*/}, 0, groupNum);
+        // addGroup({ minterms[i] }, { /*none*/ }, 0, groupNum);
+        groupedTerms.push_back({ { minterms[i] }, { /*none*/ }, 0, groupNum });
         totalAdded++;
       }
     }
@@ -99,6 +230,15 @@ int QuineMcCluskey::countOnesInBinary(int num) {
   }
 
   return count;
+}
+
+bool QuineMcCluskey::isPowerOfTwo(int num) {
+  if (num <= 0) {
+    return false;  // Negative numbers and zero are not powers of two
+  }
+
+  // Check if num is a power of two by counting the set bits (1s) in its binary representation
+  return (num & (num - 1)) == 0;
 }
 
 // QuineMcCluskey::~QuineMcCluskey() {

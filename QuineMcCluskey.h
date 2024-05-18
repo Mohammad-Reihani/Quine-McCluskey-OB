@@ -30,9 +30,9 @@ private:
   int indicator;
   int numInputs;
 
-  // std::vector<int[2]> groupedTerms;
+
   // std::vector<GroupedData> groupedTerms;
-  void addGroup(const std::vector<int>& mintermsIncluded, const std::vector<int>& deletedArgs, int stage, int groupFromTop);
+  // void addGroup(const std::vector<int>& mintermsIncluded, const std::vector<int>& deletedArgs, int stage, int groupFromTop);
 
 
   void initialMintermsGrouping();
@@ -44,13 +44,13 @@ private:
   int detectBitsCount();
 
   int countOnesInBinary(int num);
+  bool isPowerOfTwo(int num);
 
 public:
   QuineMcCluskey();
   QuineMcCluskey(int* inputArray, int length, int indicator);
-  // std::vector<std::pair<int, int>> groupedTerms;
   
-  //it's like this: minterms included, deleted ones, the stage
+  
   std::vector<GroupedData> groupedTerms;
 
   

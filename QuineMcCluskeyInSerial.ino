@@ -75,14 +75,14 @@ void loop() {
     // }
 
     Serial.println("Grouped Terms:");
-    for (const auto& data : testQMC.groupedTerms) {
+    for (const auto data : testQMC.groupedTerms) {
       Serial.print("Minterms Included: [");
-      for (const auto& minterm : data.mintermsIncluded) {
+      for (const auto minterm : data.mintermsIncluded) {
         Serial.print(minterm);
         Serial.print(" ");
       }
       Serial.print("] Deleted Args: [");
-      for (const auto& arg : data.deletedArgs) {
+      for (const auto arg : data.deletedArgs) {
         Serial.print(arg);
         Serial.print(" ");
       }
