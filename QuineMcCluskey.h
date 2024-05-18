@@ -23,6 +23,12 @@ struct GroupedData {
   int stage;         //what stage of simlification is it in? (marhale chandom e sade sazie?)
   int groupFromTop;  //yeah, for example in initial shit, it starts from 0, 1 (for 1, 2, 4, 8), and so on
   bool isPI;
+  bool isWaste;
+};
+
+struct PrimeImplicant {
+  std::vector<int> mintermsIncluded;
+  std::vector<int> deletedArgs;
 };
 
 class QuineMcCluskey {
@@ -39,7 +45,15 @@ private:
 
   void initialMintermsGrouping();
   void groupMinterms();
+
+  void markWasteImplicants();
+
   void markPrimeImplicants();
+
+  void extractPrimeImplicants(); //extracts the calculated PI's and then deletes the heavy vector to free up memory
+
+
+
   void findEssentialPrimeImplicants();
   void simplifyBooleanExpression();
   void printSimplifiedExpression();
@@ -57,6 +71,7 @@ public:
 
 
   std::vector<GroupedData> groupedTerms;
+  std::vector<PrimeImplicant> primeImplicants;
 
 
   void solve();

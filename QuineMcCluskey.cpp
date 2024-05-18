@@ -16,8 +16,10 @@ QuineMcCluskey::QuineMcCluskey(int* inputArray, int length, int indicator) {
 void QuineMcCluskey::solve() {
   initialMintermsGrouping();
   groupMinterms();
-
+  markWasteImplicants();
   markPrimeImplicants();
+
+  extractPrimeImplicants();
 
   findEssentialPrimeImplicants();
   simplifyBooleanExpression();
@@ -67,7 +69,7 @@ void QuineMcCluskey::groupMinterms() {
           deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
 
           //                    addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
-          groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop, false });
+          groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop, false, false });
           anyAdded = true;
         }
       }
@@ -94,13 +96,40 @@ void QuineMcCluskey::initialMintermsGrouping() {
         // Push a pair into groupedTerms
         // groupedTerms.push_back(std::make_pair(minterms[i], groupNum));
         // addGroup({ minterms[i] }, { /*none*/ }, 0, groupNum);
-        groupedTerms.push_back({ { minterms[i] }, { /*none*/ }, 0, groupNum, false });
+        groupedTerms.push_back({ { minterms[i] }, { /*none*/ }, 0, groupNum, false, false });
         totalAdded++;
       }
     }
     groupNum++;  // Move to the next group
   }
 }
+
+
+void QuineMcCluskey::markWasteImplicants() {
+  int endIndexHolder = groupedTerms.size();
+  for (int i = 0; i < endIndexHolder; i++) {
+
+    auto& upperdata = groupedTerms[i];
+    bool isWaste = false;
+
+    for (int j = i + 1; j < endIndexHolder; j++) {
+      const auto& lowerdata = groupedTerms[j];
+
+      if (lowerdata.stage == upperdata.stage && lowerdata.groupFromTop == upperdata.groupFromTop && compareVectors(upperdata.mintermsIncluded, lowerdata.mintermsIncluded, false) && compareVectors(upperdata.deletedArgs, lowerdata.deletedArgs, false)) {
+        isWaste = true;
+        break;
+      }
+
+
+      if (lowerdata.stage != upperdata.stage)
+        break;
+    }
+
+
+    upperdata.isWaste = isWaste;
+  }
+};
+
 
 void QuineMcCluskey::markPrimeImplicants() {
   int endIndexHolder = groupedTerms.size();
@@ -122,11 +151,28 @@ void QuineMcCluskey::markPrimeImplicants() {
         break;
     }
 
-    if (!existsInUpperStage) {
-      upperdata.isPI = true;
-    }
+    // if (!existsInUpperStage) {
+    upperdata.isPI = !existsInUpperStage;
+    // }
   }
 }
+
+
+void QuineMcCluskey::extractPrimeImplicants() {
+
+  int endIndexHolder = groupedTerms.size();
+  for (int i = 0; i < endIndexHolder; i++) {
+    auto& data = groupedTerms[i];
+    if(data.isPI && !data.isWaste){
+      primeImplicants.push_back({data.mintermsIncluded, data.deletedArgs});
+    }
+  }
+
+
+  groupedTerms.clear();          // Remove all elements from the vector
+  groupedTerms.shrink_to_fit();  // Release excess memory
+}
+
 
 void QuineMcCluskey::findEssentialPrimeImplicants() {
   // Implement essential prime implicants logic

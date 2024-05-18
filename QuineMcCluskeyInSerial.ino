@@ -74,8 +74,30 @@ void loop() {
     //     Serial.println(")");
     // }
 
-    Serial.println("Grouped Terms:");
-    for (const auto data : testQMC.groupedTerms) {
+    // Serial.println("Grouped Terms:");
+    // for (const auto data : testQMC.groupedTerms) {
+    //   Serial.print("Minterms Included: [");
+    //   for (const auto minterm : data.mintermsIncluded) {
+    //     Serial.print(minterm);
+    //     Serial.print(" ");
+    //   }
+    //   Serial.print("] Deleted Args: [");
+    //   for (const auto arg : data.deletedArgs) {
+    //     Serial.print(arg);
+    //     Serial.print(" ");
+    //   }
+    //   Serial.print("] Stage: [");
+    //   Serial.print(data.stage);
+    //   Serial.print("] groupFromTop: [");
+    //   Serial.print(data.groupFromTop);
+    //   Serial.print("] isPI: [");
+    //   Serial.print(data.isPI);
+    //    Serial.print("] isWaste: ");
+    //   Serial.println(data.isWaste);
+    // }
+
+    Serial.println("Prime Implicants:");
+    for (const auto data : testQMC.primeImplicants) {
       Serial.print("Minterms Included: [");
       for (const auto minterm : data.mintermsIncluded) {
         Serial.print(minterm);
@@ -86,12 +108,7 @@ void loop() {
         Serial.print(arg);
         Serial.print(" ");
       }
-      Serial.print("] Stage: [");
-      Serial.print(data.stage);
-      Serial.print("] groupFromTop: [");
-      Serial.print(data.groupFromTop);
-      Serial.print("] isPI: ");
-      Serial.println(data.isPI);
+      Serial.println("]");
     }
 
     incomingDone = true;
