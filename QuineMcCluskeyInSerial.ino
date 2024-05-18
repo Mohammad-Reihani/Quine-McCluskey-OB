@@ -86,10 +86,12 @@ void loop() {
         Serial.print(arg);
         Serial.print(" ");
       }
-      Serial.print("] Stage: ");
+      Serial.print("] Stage: [");
       Serial.print(data.stage);
-      Serial.print("] groupFromTop: ");
-      Serial.println(data.groupFromTop);
+      Serial.print("] groupFromTop: [");
+      Serial.print(data.groupFromTop);
+      Serial.print("] isPI: ");
+      Serial.println(data.isPI);
     }
 
     incomingDone = true;

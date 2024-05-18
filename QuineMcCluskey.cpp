@@ -16,117 +16,40 @@ QuineMcCluskey::QuineMcCluskey(int* inputArray, int length, int indicator) {
 void QuineMcCluskey::solve() {
   initialMintermsGrouping();
   groupMinterms();
-  generatePrimeImplicants();
+
+  markPrimeImplicants();
+
   findEssentialPrimeImplicants();
   simplifyBooleanExpression();
   printSimplifiedExpression();
 }
 
-// void QuineMcCluskey::addGroup(const std::vector<int>& mintermsIncluded, const std::vector<int>& deletedArgs, int stage, int groupFromTop) {
-//   groupedTerms.push_back({ mintermsIncluded, deletedArgs, stage, groupFromTop });
-// }
-
-// void QuineMcCluskey::groupMinterms() {
-//   int stage = 1;
-//   int groupFromTop = 0;
-//   int added = 0;
-//   while (true) {
-//     // for (const auto& upperdata : testQMC.groupedTerms) {
-//     //   for (const auto& lowerdata : testQMC.groupedTerms) {
-//     //     if(upperdata != lowerdata && upperdata.stage == lowerdata.stage && upperdata.group+1 == lowerdata.group
-//     //      && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])){
-//     //         //do something
-//     //     }
-//     //   }
-//     // }
-//     for (size_t i = 0; i < groupedTerms.size(); i++) {
-//       const auto& upperdata = groupedTerms[i];
-//       for (size_t j = i + 1; j < groupedTerms.size(); j++) {
-//         const auto& lowerdata = groupedTerms[j];
-//         if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])) {
-//           // addGroup(upperdata.mintermsIncluded.push_back(lowerdata.mintermsIncluded), lowerdata.deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]), stage, groupNum);
-
-//           // Combine mintermsIncluded vectors of upperdata and lowerdata
-//           std::vector<int> combinedMinterms;
-//           combinedMinterms.insert(combinedMinterms.end(), upperdata.mintermsIncluded.begin(), upperdata.mintermsIncluded.end());
-//           combinedMinterms.insert(combinedMinterms.end(), lowerdata.mintermsIncluded.begin(), lowerdata.mintermsIncluded.end());
-
-//           // Add the combined vector to deletedArgs
-//           std::vector<int> deletedArgs;
-//           deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
-
-//           // Call addGroup with combined data
-//           addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
-//           added++;
-//         }
-//       }
-//       groupFromTop++;
-//     }
-
-//     if (added == 0)
-//       break;
-//     else
-//       added = 0;
-
-//     stage++;
-//   }
-// }
-
-// void QuineMcCluskey::groupMinterms() {
-//   int stage = 1;
-//   int groupFromTop = 0;
-//   int added = 0;
-//   std::vector<int> combinedMinterms;
-//   std::vector<int> deletedArgs;
-
-//   while (true) {
-//     bool anyAdded = false;
-
-
-//     for (int i = 0; i < groupedTerms.size(); i++) {
-//       const auto upperdata = groupedTerms[i];
-//       for (int j = i + 1; j < groupedTerms.size(); j++) {
-//         const auto lowerdata = groupedTerms[j];
-//         if (upperdata.stage == lowerdata.stage && upperdata.groupFromTop + 1 == lowerdata.groupFromTop && isPowerOfTwo(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0])) {
-//           combinedMinterms.clear();
-//           combinedMinterms.insert(combinedMinterms.end(), upperdata.mintermsIncluded.begin(), upperdata.mintermsIncluded.end());
-//           combinedMinterms.insert(combinedMinterms.end(), lowerdata.mintermsIncluded.begin(), lowerdata.mintermsIncluded.end());
-
-//           deletedArgs.clear();
-//           deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
-
-//           // addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
-//           groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop });
-//           added++;
-//           anyAdded = true;
-//         }
-//       }
-//       groupFromTop++;
-//     }
-
-//     if (!anyAdded)
-//       break;
-
-//     stage++;
-//   }
-// }
-
-
 void QuineMcCluskey::groupMinterms() {
   int stage = 1;
-  int groupFromTop = 0;
+  // int groupFromTop = 0;
   int startIndex;
   int endIndexHolder = 0;
   std::vector<int> combinedMinterms;
   std::vector<int> deletedArgs;
   while (true) {
 
+    int groupFromTop = -1;
+    int groupObserver = -1;
+
     startIndex = endIndexHolder;
     endIndexHolder = groupedTerms.size();
     bool anyAdded = false;
     for (int i = startIndex; i < endIndexHolder; i++) {
-
       const auto upperdata = groupedTerms[i];
+
+      // if(groupObserver == -1)
+      //   groupObserver = upperdata.groupFromTop;
+      if (groupObserver != upperdata.groupFromTop) {
+        groupFromTop++;
+        groupObserver = upperdata.groupFromTop;
+      }
+
+
       for (int j = i + 1; j < endIndexHolder; j++) {
         const auto& lowerdata = groupedTerms[j];
 
@@ -144,11 +67,11 @@ void QuineMcCluskey::groupMinterms() {
           deletedArgs.push_back(lowerdata.mintermsIncluded[0] - upperdata.mintermsIncluded[0]);
 
           //                    addGroup(combinedMinterms, deletedArgs, stage, groupFromTop);
-          groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop });
+          groupedTerms.push_back({ combinedMinterms, deletedArgs, stage, groupFromTop, false });
           anyAdded = true;
         }
       }
-      groupFromTop++;
+      // groupFromTop++;
     }
 
 
@@ -171,7 +94,7 @@ void QuineMcCluskey::initialMintermsGrouping() {
         // Push a pair into groupedTerms
         // groupedTerms.push_back(std::make_pair(minterms[i], groupNum));
         // addGroup({ minterms[i] }, { /*none*/ }, 0, groupNum);
-        groupedTerms.push_back({ { minterms[i] }, { /*none*/ }, 0, groupNum });
+        groupedTerms.push_back({ { minterms[i] }, { /*none*/ }, 0, groupNum, false });
         totalAdded++;
       }
     }
@@ -179,8 +102,30 @@ void QuineMcCluskey::initialMintermsGrouping() {
   }
 }
 
-void QuineMcCluskey::generatePrimeImplicants() {
-  // Implement prime implicants generation logic
+void QuineMcCluskey::markPrimeImplicants() {
+  int endIndexHolder = groupedTerms.size();
+  for (int i = 0; i < endIndexHolder; i++) {
+
+    auto& upperdata = groupedTerms[i];
+    bool existsInUpperStage = false;
+
+    for (int j = i + 1; j < endIndexHolder; j++) {
+      const auto& lowerdata = groupedTerms[j];
+
+      if (lowerdata.stage == upperdata.stage + 1 && vectorExists(upperdata.mintermsIncluded, lowerdata.mintermsIncluded)) {
+        existsInUpperStage = true;
+        break;
+      }
+
+
+      if (lowerdata.stage > upperdata.stage + 1)
+        break;
+    }
+
+    if (!existsInUpperStage) {
+      upperdata.isPI = true;
+    }
+  }
 }
 
 void QuineMcCluskey::findEssentialPrimeImplicants() {
@@ -259,19 +204,35 @@ bool QuineMcCluskey::compareVectors(const std::vector<int>& vec1, const std::vec
 }
 
 void QuineMcCluskey::vectorSelectionSort(std::vector<int>& vec) {
-    int n = vec.size();
-    for (int i = 0; i < n - 1; i++) {
-        int minIndex = i;
-        for (int j = i + 1; j < n; j++) {
-            if (vec[j] < vec[minIndex]) {
-                minIndex = j;
-            }
-        }
-        // Swap vec[i] and vec[minIndex]
-        int temp = vec[i];
-        vec[i] = vec[minIndex];
-        vec[minIndex] = temp;
+  int n = vec.size();
+  for (int i = 0; i < n - 1; i++) {
+    int minIndex = i;
+    for (int j = i + 1; j < n; j++) {
+      if (vec[j] < vec[minIndex]) {
+        minIndex = j;
+      }
     }
+    // Swap vec[i] and vec[minIndex]
+    int temp = vec[i];
+    vec[i] = vec[minIndex];
+    vec[minIndex] = temp;
+  }
+}
+
+
+
+bool QuineMcCluskey::vectorExists(const std::vector<int>& subVec, const std::vector<int>& mainVec) {
+  if (subVec.size() > mainVec.size()) {
+    return false;  // Subvector cannot be larger than main vector
+  }
+
+  for (size_t i = 0; i <= mainVec.size() - subVec.size(); i++) {
+    if (std::equal(subVec.begin(), subVec.end(), mainVec.begin() + i)) {
+      return true;  // Subvector found in main vector
+    }
+  }
+
+  return false;  // Subvector not found in main vector
 }
 
 // QuineMcCluskey::~QuineMcCluskey() {
