@@ -42,7 +42,7 @@ struct Minterm {
 class QuineMcCluskey {
 private:
 //    int* minterms;
-    std::vector<Minterm> Minterms;
+//    std::vector<Minterm> Minterms;
     int numMinterms;
     int maxtermIsInput;
     int bitsNum;
@@ -60,7 +60,11 @@ private:
 
 
     void markEssentialPrimeImplicants();
-    void simplifyBooleanExpression();
+
+    void updatedCoveredMinterms();
+    void markRequiredPrimeImplicants();
+
+
     void printSimplifiedExpression();
     int detectBitsCount();
 
@@ -76,9 +80,9 @@ public:
     QuineMcCluskey(int* inputArray, int length, bool maxtermIsInput);
 
 
+    std::vector<Minterm> Minterms;
     std::vector<GroupedData> groupedTerms;
     std::vector<PrimeImplicant> primeImplicants;
-
 
     void solve();
 };

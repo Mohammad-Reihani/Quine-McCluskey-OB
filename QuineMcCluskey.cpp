@@ -1,5 +1,6 @@
 // QuineMcCluskey.cpp
 
+
 #include "QuineMcCluskey.h"
 
 QuineMcCluskey::QuineMcCluskey(){};
@@ -22,11 +23,12 @@ void QuineMcCluskey::solve() {
     markWasteImplicants();
     markPrimeImplicants();
     extractPrimeImplicants();
-
     markEssentialPrimeImplicants();
 
+    updatedCoveredMinterms();
 
-    simplifyBooleanExpression();
+
+    markRequiredPrimeImplicants();
     printSimplifiedExpression();
 }
 
@@ -298,8 +300,8 @@ void QuineMcCluskey::markEssentialPrimeImplicants() {
 
 }
 
-void QuineMcCluskey::simplifyBooleanExpression() {
-    // Implement Boolean expression simplification logic
+void QuineMcCluskey::markRequiredPrimeImplicants() {
+    // this function uses Petrick's Method
 }
 
 void QuineMcCluskey::printSimplifiedExpression() {
@@ -419,6 +421,27 @@ bool QuineMcCluskey::hasCommonElement(const std::vector<int>& vec1, const std::v
         }
     }
     return false;
+}
+
+void QuineMcCluskey::updatedCoveredMinterms(){
+    for(auto& minterm : Minterms){
+        if(!minterm.isCovered){//should it be like this?
+            bool isCovered = false;
+            for (const auto& primeI : primeImplicants){
+                if(primeI.isRequired == 1){
+                    for (int elem : primeI.mintermsIncluded){
+                        if(minterm.minterm == elem){
+                            isCovered = true;
+                            break;
+                        }
+                    }
+                    if(isCovered)
+                        break;
+                }
+            }
+            minterm.isCovered = isCovered;
+        }
+    }
 }
 
 // QuineMcCluskey::~QuineMcCluskey() {
