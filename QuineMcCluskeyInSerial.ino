@@ -49,6 +49,8 @@ void parseReceivedMessage(String& receivedString) {
   minterms[arrayIdx] = mintermsStr.toInt();
 }
 
+String response = "";
+
 
 
 void setup() {
@@ -95,20 +97,29 @@ void loop() {
     //    Serial.print("] isWaste: ");
     //   Serial.println(data.isWaste);
     // }
+    
 
     Serial.println("Prime Implicants:");
+    response += "Prime Implicants:";
     for (const auto data : testQMC.primeImplicants) {
       Serial.print("Minterms Included: [");
+      response +="Minterms Included: [";
       for (const auto minterm : data.mintermsIncluded) {
         Serial.print(minterm);
         Serial.print(" ");
+        response += String(minterm);
+        response += " ";
       }
       Serial.print("] Deleted Args: [");
+      response += "] Deleted Args: [";
       for (const auto arg : data.deletedArgs) {
         Serial.print(arg);
         Serial.print(" ");
+        response += String(arg);
+        response += " ";
       }
       Serial.println("]");
+      response += "]";
     }
 
     incomingDone = true;
@@ -117,8 +128,8 @@ void loop() {
   if (incomingDone) {
     delay(1000);
 
-    esp8266Serial.print("sample response");
-
+    esp8266Serial.print(response);
+    response = "";
     incomingDone = false;
   }
 }
