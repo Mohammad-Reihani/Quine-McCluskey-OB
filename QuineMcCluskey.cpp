@@ -28,7 +28,9 @@ void QuineMcCluskey::solve() {
     updatedCoveredMinterms();
 
 
-    markRequiredPrimeImplicants();
+    ApplyPetricsMethod();
+
+
     printSimplifiedExpression();
 }
 
@@ -300,8 +302,42 @@ void QuineMcCluskey::markEssentialPrimeImplicants() {
 
 }
 
-void QuineMcCluskey::markRequiredPrimeImplicants() {
-    // this function uses Petrick's Method
+void QuineMcCluskey::ApplyPetricsMethod() {
+    // going for Petrics method if needed. checking if there is any uncovered Minterm, this should suffice right?
+    if(uncoveredMintermReimained()){
+        //use index if unessential PI as it's label
+        // create a vector that holds boolean expression and then define methods to do that bool aljebra
+
+
+        //looping over reamining minterms to create bool expression:
+        std::vector<std::vector<int>> andExpressions;
+        for (const auto & elem: Minterms)
+            if (!elem.isCovered){
+                //loop over primeImplicants and push back the indexes into the shit
+                int hold = int(primeImplicants.size());
+                std::vector<int> temp;
+                for (int i = 0; i < hold; ++i)
+                    if(!primeImplicants[i].isEssential)
+                        for (const auto & minterm : primeImplicants[i].mintermsIncluded)
+                            if (elem.minterm == minterm){
+                                temp.push_back(i);
+                                break;
+                            }
+                andExpressions.push_back(temp);
+//                std::cout << "or elem : [ ";
+//                for (int t: temp) {
+//                    std::cout << t << " ";
+//                }
+//                std::cout << "]" << std::endl;
+            }
+
+        //by now, the initial P has been formed (andExpression). now just we need to simplify it and convert it into SOP form
+
+
+
+
+
+    }
 }
 
 void QuineMcCluskey::printSimplifiedExpression() {
@@ -442,6 +478,13 @@ void QuineMcCluskey::updatedCoveredMinterms(){
             minterm.isCovered = isCovered;
         }
     }
+}
+
+bool QuineMcCluskey::uncoveredMintermReimained(){
+    for (const auto & elem: Minterms)
+        if (!elem.isCovered)
+            return true;
+    return false;
 }
 
 // QuineMcCluskey::~QuineMcCluskey() {

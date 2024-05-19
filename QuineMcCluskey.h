@@ -62,7 +62,7 @@ private:
     void markEssentialPrimeImplicants();
 
     void updatedCoveredMinterms();
-    void markRequiredPrimeImplicants();
+    void ApplyPetricsMethod();
 
 
     void printSimplifiedExpression();
@@ -75,6 +75,7 @@ private:
     bool vectorExists(const std::vector<int>& subVec, const std::vector<int>& mainVec);
     void buildMinterms(int* inputArray);
     bool hasCommonElement(const std::vector<int>& vec1, const std::vector<int>& vec2);
+    bool uncoveredMintermReimained();
 public:
     QuineMcCluskey();
     QuineMcCluskey(int* inputArray, int length, bool maxtermIsInput);
