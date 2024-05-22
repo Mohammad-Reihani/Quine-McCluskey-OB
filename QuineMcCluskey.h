@@ -29,16 +29,12 @@ struct MainTerm {
 
 class QuineMcCluskey {
 private:
-
-    //TODO Add getStringExpression method and related.
-
     // Some very important and private variables :
     bool isSolved = false;
     int* allTerms{}; //includes dont-care's too
     int numMainTerms{};
 //    int numDontCares;
     int numAll{};
-
     int maxTermIsInput{};
     int bitsNum{};
 
@@ -56,6 +52,7 @@ private:
     void markEssentialPrimeImplicants();
     void updatedCoveredMainTerms();
     void ApplyPetricksMethod();
+
 
 
     // Sub-functions :
@@ -77,24 +74,18 @@ private:
     static void removeDuplicatesAndSortArray(int* arr, int& size);
     static std::string intToBinaryString(const int& num , const int& bits);
 public:
-
     // Constructors :
     QuineMcCluskey();
     QuineMcCluskey(int* mainTermsInputArray, int mainTermsInputArrayLength, bool maxTermsAreInput);//The constructor for NO DON'T CARE'S
     QuineMcCluskey(int* mainTermsInputArray, int mainTermsInputArrayLength, int* dontCaresInputArray, int dontCaresInputArrayLength, bool maxTermsAreInput);//The constructor for NO DON'T CARE'S
 
-
     // Optional Functions :
     void printSimplifiedExpression();
     std::string getStringExpression();
+
     // Optional : Getters :
     const std::vector<MainTerm> &getMainTerms() const;
     const std::vector<GroupedData> &getGroupedTerms() const;
     const std::vector<PrimeImplicant> &getPrimeImplicants() const;
-
     void solve();
-
-
-
 };
-

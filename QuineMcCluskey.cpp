@@ -574,7 +574,20 @@ bool QuineMcCluskey::compareVectors(const std::vector<int>& vec1, const std::vec
 
 std::string QuineMcCluskey::getStringExpression() {
     if(isSolved){
-        std::string result;
+        std::string Inputs[] = {
+                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+        };
+        std::string result{};
+
+        // Building the F(a,b,c...) :
+        result += "F(";
+        for (int i = 0; i < bitsNum; ++i) {
+            result += Inputs[i] + ",";
+        }
+        result = result.substr(0, result.size() - 1); // Deleting the last ','
+        result += ")=";
+
         for (const auto& elem: primeImplicants) {
             if (elem.isRequired == 1){
                 result += maxTermIsInput ? "(" : "";
