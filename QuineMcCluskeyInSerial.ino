@@ -101,7 +101,10 @@ int numDontCareTerms;
 bool isMaxTerm;
 
 QuineMcCluskey qmc;
+String response = "";
 
+
+// Received info from arduino parser
 void parseReceivedMessage(String& receivedString) {
     // Find the indices of key substrings
     int startIdx = receivedString.indexOf("mainTerms: ") + 11;
@@ -181,14 +184,10 @@ void parseReceivedMessage(String& receivedString) {
     Serial.println(isMaxTerm ? "true" : "false");
 }
 
-String response = "";
-
-
-
 void setup() {
   Serial.begin(19200);
   esp8266Serial.begin(9600);
-  Serial.println("Testing the ESP8266 communication");
+  Serial.println("ESP8266 Connected via serial"); //just a debug message
 }
 
 
@@ -199,62 +198,63 @@ void loop() {
     qmc = QuineMcCluskey(mainTerms, numMainTerms, isMaxTerm);
     qmc.solve();
 
-    // Serial.println("Grouped Terms:");
-    // for (const auto& term : qmc.groupedTerms) {
-    //     Serial.print("(");
-    //     Serial.print(term.first); // Print the minterm
-    //     Serial.print(", ");
-    //     Serial.print(term.second); // Print the group number
-    //     Serial.println(")");
-    // }
-
-    // Serial.println("Grouped Terms:");
-    // for (const auto data : qmc.groupedTerms) {
-    //   Serial.print("Minterms Included: [");
-    //   for (const auto minterm : data.mintermsIncluded) {
-    //     Serial.print(minterm);
-    //     Serial.print(" ");
-    //   }
-    //   Serial.print("] Deleted Args: [");
-    //   for (const auto arg : data.deletedArgs) {
-    //     Serial.print(arg);
-    //     Serial.print(" ");
-    //   }
-    //   Serial.print("] Stage: [");
-    //   Serial.print(data.stage);
-    //   Serial.print("] groupFromTop: [");
-    //   Serial.print(data.groupFromTop);
-    //   Serial.print("] isPI: [");
-    //   Serial.print(data.isPI);
-    //    Serial.print("] isWaste: ");
-    //   Serial.println(data.isWaste);
-    // }
-    
-
-    Serial.println("Prime Implicants:");
-    // response += "Prime Implicants:";
-    for (const auto data : qmc.getPrimeImplicants()) {
-      Serial.print("Minterms Included: [");
-      // response +="Minterms Included: [";
-      for (const auto minterm : data.termsIncluded) {
-        Serial.print(minterm);
-        Serial.print(" ");
-        // response += String(minterm);
-        // response += " ";
-      }
-      Serial.print("] Deleted Args: [");
-      // response += "] Deleted Args: [";
-      for (const auto arg : data.deletedArgs) {
-        Serial.print(arg);
-        Serial.print(" ");
-        // response += String(arg);
-        // response += " ";
-      }
-      Serial.println("]");
-      // response += "]";
+    //********************************************************************************************
+    // Printing some stuff. some extra info, to see better thing, view the written class demo on your local machine.
+    // Nothing that matters so much, but if you want to view this in serial too, just in case. right?
+    Serial.println("-------------------------------------------------------------------");
+    Serial.println("The function is now simplified, getting ready to display results : ");
+    Serial.println("-------------------------------------------------------------------");
+    Serial.println("Grouped Terms:");//Showing the whole simplification table, can you print it vertically?
+    for (const auto& data : qmc.getGroupedTerms()) {
+        Serial.print("MainTerms Included: [");
+        for (const auto& minterm : data.termsIncluded) {
+            Serial.print(minterm);
+            Serial.print(" ");
+        }
+        Serial.print("] Deleted Args: [");
+        for (const auto& arg : data.deletedArgs) {
+            Serial.print(arg);
+            Serial.print(" ");
+        }
+        Serial.print("] stage: ");
+        Serial.print(data.stage);
+        Serial.print(" isPI: ");
+        Serial.println(data.isPI);
     }
+    Serial.println("-------------------------------------------------------------------");
+    Serial.println("Prime Implicants:");//Show prime implicants with details
+    for (const auto& data : qmc.getPrimeImplicants()) {
+        Serial.print("MainTerms Included: [");
+        for (const auto& minterm : data.termsIncluded) {
+            Serial.print(minterm);
+            Serial.print(" ");
+        }
+        Serial.print("] Deleted Args: [");
+        for (const auto& arg : data.deletedArgs) {
+            Serial.print(arg);
+            Serial.print(" ");
+        }
+        Serial.print("] isEssential: ");
+        Serial.print(data.isEssential);
+        Serial.print(" isRequired: ");
+        Serial.println(data.isRequired);
+    }
+    Serial.println("-------------------------------------------------------------------");
+    Serial.println("MainTerms status:");//Showing the status of mainTerms if they're covered or not.
+    for (const auto& data : qmc.getMainTerms()) {
+        Serial.print("term : ");
+        Serial.print(data.term);
+        Serial.print(" | is covered : ");
+        Serial.println(data.isCovered);
+    }
+    Serial.println("-------------------------------------------------------------------");
+    Serial.println("Simplified Expression : ");
+    Serial.println(String(qmc.getStringExpression().c_str()));
 
-    // response = ;
+    //********************************************************************************************
+
+
+    //Getting and sending the response to display
     response = String(qmc.getStringExpression().c_str());
     response += '*'; //this is an end mark
     Serial.println(response);
